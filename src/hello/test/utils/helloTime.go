@@ -8,20 +8,7 @@ import (
 // https://my.oschina.net/u/943306/blog/149395
 func HelloTime() {
 
-	// helloNow()
-	// helloAdd()
-	// helloSleep()
-	// helloAfter()
-	// helloTicker()
-	// helloAfterFunc()
 	helloBeforeAndAfter()
-
-	// time.format
-	// fmt.Println("time.format")
-
-	// time.string.format
-	// fmt.Println("time.string.format")
-
 }
 
 func helloNow() {

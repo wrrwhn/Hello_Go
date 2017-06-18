@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"hello/branch/utils"
+	diff "hello/test/branch/utils"
 )
 
 func HelloPackage() {

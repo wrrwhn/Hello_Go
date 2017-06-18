@@ -2,5 +2,8 @@ package utils
 
 import (
 	"fmt"
-	"io/ioutil"
 )
+
+func HelloWeb() {
+	fmt.Println("TODO")
+}

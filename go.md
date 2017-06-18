@@ -9,7 +9,7 @@
 - [Go入门指南](https://github.com/Unknwon/the-way-to-go_ZH_CN/tree/master/eBook)
 
 ## 安装
-- [Go-Download](https://golang.org/dl/)
+- [Go-Download](https://golang.org/dl/)my
 - [Install](https://go-zh.org/doc/install)
 - add *D:\server\go\1.8* to `path`
 - 添加 `GOPATH` 和 `GOROOT`=`GOBIN` 对应目录
@@ -772,19 +772,6 @@ slice:= slice[4:4+1]    // 9
     + import后面的最后一个元素应该是路径，就是目录，并非包名。
     + 别名指代的是引用路径下唯一的那个包
 
-### 
-
-
-
-
-
-
-
-
-
-
-
-
 
 ## test
 ### 参考
@@ -857,3 +844,135 @@ func TestHelloTest_test(t *testing.T) {     // 固定 Test 前缀，`t *testing.
         PASS
         ok      hello/utils 2.575s
         ```
+
+### 流程
+#### 目录
+- gopath
+    + ucmain.go
+    + Makefile
+    + ucmain
+    + src
+        * uc
+            - uc.go
+            - uc_test.go
+            - Makefile          // make 生成
+            - uc.a
+            - _obj              // gomake
+                + uc.a
+            - _test
+                + uc.a
+    + bin
+        * ucmain
+    + pkg
+        * linux_amd64
+            - uc.a              // go install uc 时将 uc.a 复制到此，可供其它程序以 `import "uc"` 方式引用
+
+### 外部引用
+- https://github.com/google/google-api-go-client
+- go get github.com/google/google-api-go-client/urlshortener/v1 
+    + go install google-api-go-client/urlshortener/v1
+- import (urlshortener "google.golang.org/api/urlshortener/v1")
+
+
+## 结构与方法
+### 结构体
+- 使用
+```
+type T struct {a, b int}        // define
+
+var s *T= new (T)                // new
+s.a= 5                          // setter
+s.b= 8
+
+var o T= T{a: 5, b: 8}         // new-2
+var p T= T{5, 8}               // new-3
+```
+- 结构
+    + 结构体和它所包含的数据在`内存`中是以`连续块`的形式存在的
+    + ![c7a8b1b0-49cd-11e7-b720-0071cc916200.png](http://7xsy59.com1.z0.glb.clouddn.com/c7a8b1b0-49cd-11e7-b720-0071cc916200.png)
+
+- 推荐
+    + `私有化结构定义`，并提供`工厂`实现类
+    ```
+    type person struct{name, addr string}
+    func initPerson(name, addr string) *person{
+        var p = new(person)
+        // do some init
+        return p
+    }
+    ```
+### 反射
+- 定义
+    ```
+    type TypeTag struct {
+        name    string  "type_tag.name"
+     // field   type    tag
+    }    
+    ```
+- 获取结构相关信息
+```
+t := reflect.TypeOf(typeTag)
+t.Field(i).Tag
+```
+
+### 匿名字段
+- 定义
+```
+type Anony struct{
+    ax, ay int
+}
+type B struct {
+    bx    int
+    int             // 匿名字段
+    Anony           // 匿名字段
+}
+```
+- 注意
+    + 定义：各结构体中，针对`每种数据类型`只能有一个匿名字段
+    + 调用
+        * `b.int= 9`
+        * `b.ax`
+
+### 命名冲突
+- 定义
+```
+type A struct {
+    a int
+}
+
+type B struct {
+    a, b int
+}
+
+type C struct {
+    A
+    B
+}
+```
+- 使用
+```
+c := C{A{1}, B{2, 3}}
+fmt.Println(c, c.A.a, c.B.a, c.B.b)
+```
+
+### 类方法
+- 特点
+    + 类方法通过类型和方法绑定来定义
+    + 类型定义与方法定义`可于不同源文件`，但须于`同一包中`
+    + 因不允许重载，同一类型仅有一给定名称方法
+    + 指针方法和值方法都可以在指针或非指针上被调用
+- 定义
+```
+type Class struct {
+    name string
+}
+
+func (this *Class) get() string {
+    return this.name
+}
+func (this *Class) set(newName string) {
+    this.name = newName
+}
+```
+
+### 内嵌类型的方法和继承
