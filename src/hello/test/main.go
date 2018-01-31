@@ -7,5 +7,5 @@ import (
 
 // Hello_Go/src/main.go/main()
 func main() {
-	utils.HelloTypeMethod()
+	utils.HelloReflect()
 }
